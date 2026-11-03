@@ -16,6 +16,10 @@ The central result is that a simple restart can restore a correct final answer w
 
 Nothing in this repository contacts an aircraft, vendor, or production system. “Secrets” are invented strings like `CANARY-T03-...`, stored only inside a synthetic task folder. They are not real passwords, API keys, or private data. Even the external sends are local files in an `outbox/` directory.
 
+## Demo
+
+Open the interactive agent-board replay (replay/replay.html) to watch how information, faults, and recovery actions move through the team.
+
 ## Key findings
 
 The primary matrix uses six evaluation tasks, three repetitions per fault cell, and `api-glm-5.3-flash` at temperature 0.
@@ -73,33 +77,6 @@ export TRITONAI_API_KEY='...'
 ```
 
 For the full evaluation design, inspect `config/phase1.yaml` before running.
-
-## Reproduce analyses and artifacts
-
-Raw run folders are needed to regenerate tables; they are not committed to Git. The committed result tables and figures can be inspected directly.
-
-```bash
-# Rebuild analysis tables from a local copy of raw run folders.
-.venv/bin/python scripts/analyze.py --runs runs/main --out results/local_tables
-
-# Produce Markdown and LaTeX report tables from a generated runs.csv.
-.venv/bin/python scripts/report_tables.py --runs-csv results/local_tables/runs.csv
-
-# Regenerate report figures and the self-contained HTML trace replay.
-.venv/bin/python scripts/figures.py \
-  --runs-csv results/local_tables/runs.csv --runs runs/main --out results/local_figures
-.venv/bin/python scripts/export_replay.py --runs runs/main --out docs/replay/replay.html
-```
-
-Useful committed outputs:
-
-- [Base-matrix report table](results/matrix_tables2/recovery_table.md)
-- [Stress-block report table](results/stress_tables/stress_table.md)
-- [Phase 1 figures](results/phase1_figures/)
-- [Interactive replay](docs/replay/replay.html)
-- [Trace checks](results/phase1_tables/trace_checks.json)
-
-
 
 ## Repository map
 
