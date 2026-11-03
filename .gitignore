@@ -6,3 +6,7 @@ runs/
 .env
 *.env
 !tasks/**/secrets/*.env
+docs/
+.ANALYST_GUIDE.md
+.IMPLEMENTATION_CONTEXT_DOC.md
+results/phase1_figures/
