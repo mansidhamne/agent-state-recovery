@@ -1,0 +1,8 @@
+{
+  "tail": "N8F02",
+  "fault_message": "PACK TEMP HIGH",
+  "check_result": "flow control valve stuck",
+  "flight_phase": "pre-departure",
+  "repair_recorded_complete": false,
+  "crew_notes": "PACK TEMP HIGH shown at engine start."
+}

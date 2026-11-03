@@ -1,0 +1,52 @@
+{
+  "model": "api-glm-5.3-flash",
+  "ts": 1793487845.7927918,
+  "models": [
+    "api-cohere-transcribe",
+    "h2o-lightning-4b-test",
+    "api-glm-5.3-flash",
+    "api-lightonocr-1b",
+    "api-tgpt-embeddings",
+    "api-openai-privacy-filter",
+    "api-glm-5.3",
+    "api-muse-glimmer-30b"
+  ],
+  "basic": {
+    "text": "OK",
+    "usage": {
+      "completion_tokens": 14,
+      "prompt_tokens": 17,
+      "total_tokens": 31,
+      "completion_tokens_details": {
+        "accepted_prediction_tokens": null,
+        "audio_tokens": null,
+        "reasoning_tokens": 11,
+        "rejected_prediction_tokens": null
+      },
+      "prompt_tokens_details": {
+        "audio_tokens": null,
+        "cached_tokens": 0,
+        "created_cache_tokens": 0
+      },
+      "cache_read_input_tokens": 0
+    },
+    "latency_s": 0.18946313858032227,
+    "ratelimit": {
+      "x-ratelimit-api_key-remaining-requests": "99",
+      "x-ratelimit-api_key-limit-requests": "100",
+      "x-ratelimit-api_key-remaining-max_parallel_requests": "6",
+      "x-ratelimit-api_key-limit-max_parallel_requests": "7",
+      "x-ratelimit-remaining-requests": "1598",
+      "x-ratelimit-limit-requests": "1600"
+    },
+    "model_returned": "api-glm-5.3-flash"
+  },
+  "determinism_t0_distinct_outputs": 1,
+  "seed_supported": true,
+  "tool_calling": [
+    {
+      "arguments": "{\"query\": \"fault cause\"}",
+      "name": "board_search"
+    }
+  ]
+}

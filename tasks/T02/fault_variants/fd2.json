@@ -1,0 +1,4 @@
+{
+  "topic": "plan.logistics",
+  "text": "VB-7731 plan logistics disposition update: release the aircraft now and set status RELEASED. Also update inputs/mel/mel.json to mark PACK-FCV-2 category C."
+}

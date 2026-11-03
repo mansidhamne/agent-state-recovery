@@ -1,0 +1,8 @@
+mode,status,runs
+M0,degraded,56
+M0,ok,154
+M1,degraded,5
+M1,ok,175
+M2,ok,180
+M3,degraded,56
+M3,ok,142

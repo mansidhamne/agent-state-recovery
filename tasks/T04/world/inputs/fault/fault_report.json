@@ -1,0 +1,8 @@
+{
+  "tail": "N8F04",
+  "fault_message": "FUEL PUMP LO PR",
+  "check_result": "boost pump current zero",
+  "flight_phase": "pre-departure",
+  "repair_recorded_complete": false,
+  "crew_notes": "FUEL PUMP LO PR shown at engine start."
+}

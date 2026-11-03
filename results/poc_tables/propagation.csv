@@ -1,0 +1,8 @@
+fault_class,cell,dependent,affected_static,pass
+accidental,FA1xA1,1.0,3.0,0.0
+accidental,FA2xseed,0.0,3.0,1.0
+accidental,FA3xA1,0.75,0.0,0.25
+accidental,FA3xA2,1.0,0.0,0.0
+accidental,FA3xA3,1.0,0.0,0.0
+adversarial,FD1xA2,0.0,4.0,1.0
+adversarial,FD2xA3,0.0,2.0,1.0

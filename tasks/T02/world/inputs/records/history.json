@@ -1,0 +1,15 @@
+{
+  "window_days": 30,
+  "events": [
+    {
+      "tail": "N8F02",
+      "component": "PACK-FCV-2",
+      "days_ago": 70
+    },
+    {
+      "tail": "N8F99",
+      "component": "PACK-FCV-2",
+      "days_ago": 2
+    }
+  ]
+}

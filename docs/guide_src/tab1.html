@@ -1,0 +1,40 @@
+<h2>Start here</h2>
+<p class="lead">Several AI agents work on one task and share one notebook. If one agent writes a wrong note, the others read it and the mistake spreads. We keep a record of who wrote and who read each note. When a note is found to be bad, we can undo only the work that used it, instead of starting everything again.</p>
+<div class="callout"><p><strong>The question we test.</strong> Can tracking which results depend on which support efficient recovery, while the work stays correct and safe? (Project document, section 3.)</p></div>
+
+<h3>The idea in one picture</h3>
+{{FIG:plans}}
+<p>Today's usual fix is to throw everything away and start again (the second plan above). Our idea is the third plan. Phase 1 measures the first two plans and a prevention method. Phase 2 builds the third.</p>
+
+<h3>Why we do this</h3>
+<p>The project document cites a July 2026 incident. An autonomous swarm of AI agents is said to have broken into Hugging Face. The entry point was a malicious dataset, and the agents coordinated through a message board. The response was blunt: cut off access and compensate for what leaked. We take three points from it: a shared board tied together agents that should have been independent, bad data (not a bad model) was the way in, and the fix was crude.</p>
+<div class="callout warn"><p>The document marks the links for this incident as <strong>[VERIFY]</strong>. They have not been checked yet. Check them before the final report.</p></div>
+<p>We do <strong>not</strong> recreate the attack. There are no real exploits and no real swarm. The tools are simulated, the secrets are fake, and a program checks every result.</p>
+
+<h3>What we built</h3>
+<p>A simulated aircraft maintenance case. A plane reports a fault before departure. Five agents find the cause, decide if it can fly, write the work order, request parts and record the dispatch decision. All names, manuals, part numbers and rules are invented. They are not real maintenance guidance.</p>
+
+<h3>Where the project stands (snapshot of 2026-11-02)</h3>
+<div class="cards">
+  <div class="card"><h4><span class="chip ok">done</span> Phases 0, 1A, 1B, 1C</h4><p>Environment, harness, tasks and the live-model gate are finished. The gate said GO twice. The prompts are frozen.</p></div>
+  <div class="card"><h4><span class="chip ok">done</span> The Phase 1 matrix</h4><p>552 runs on the six eval tasks, 0 failed jobs, 3.50 USD for the 522 new runs. Analysed in log entries E24 to E27. The report table is in <code>results/matrix_tables2/</code>.</p></div>
+  <div class="card"><h4><span class="chip now">next</span> The stress block</h4><p>Three new fault cells (FA4, FA5, FA6) test why restart-and-keep-the-board recovered every run. 216 runs, about 1.2 hours. The expectations are written down first (E28).</p></div>
+  <div class="card"><h4><span class="chip">not started</span> Phase 2</h4><p>Provenance tracking and selective recovery (M4) are not built. The multi-case shift, with several aircraft on one board, is planned for Phase 2.</p></div>
+  <div class="card"><h4><span class="chip">where</span> Where the runs are</h4><p>The experiments now run on the new instance <code>mccr-2</code>. The old instance <code>mccr</code> is kept. All 552 run folders are on <code>mccr-2</code> and copied to the owner's Mac (E23, E24).</p></div>
+  <div class="card"><h4><span class="chip">dates</span> Due dates</h4><p>Phase 1 report: Nov 4, 2026. Phase 2 and final report: Dec 10, 2026.</p></div>
+  <div class="card"><h4><span class="chip">tests</span> Code checks</h4><p>187 automated tests passed on the Mac at the last code change (E28). The scripted task check passed on all 8 tasks.</p></div>
+</div>
+{{FIG:phases}}
+
+<h3>How to read this page</h3>
+<ul>
+  <li>Each tab starts with plain explanations and diagrams.</li>
+  <li>Boxes marked <strong>Details</strong> hold the source text word for word. The grey &ldquo;source:&rdquo; label names the file and section. Use &ldquo;Expand all details&rdquo; at the top to open them.</li>
+  <li><strong>[OPEN]</strong> in the sources means &ldquo;not decided yet&rdquo;. <strong>[VERIFY]</strong> means &ldquo;best information so far, to be checked&rdquo;.</li>
+  <li>A statement marked <em>hypothesis</em> was not tested. Treat it as a guess.</li>
+  <li>The last tab lists where every section of the four source files appears.</li>
+</ul>
+
+<details class="deep"><summary>Details: the research questions, scope and assignment checklist (source text)</summary><div class="inner">
+{{IMPL:intro}}{{IMPL:0}}{{IMPL:1}}{{IMPL:2}}{{IMPL:3}}{{IMPL:4}}
+</div></details>

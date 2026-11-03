@@ -1,0 +1,70 @@
+<h2>Next steps and decisions</h2>
+<p class="lead">This tab lists what is left, the decisions still open, and the weak points. Nothing here is decided for you. Where a decision is open, the options come from the sources, and the owner box is empty.</p>
+
+<h3>Remaining Phase 1 steps (due Nov 4, 2026)</h3>
+<ol>
+  <li><span class="chip ok">done</span> Matrix (552 runs), analysis (E24 to E27), new metrics and the report table.</li>
+  <li><strong>Pull the code on <code>mccr-2</code> and run the tests.</strong> 187 passed on the Mac.
+<pre><code>cd ~/mcc-recovery &amp;&amp; git pull origin main &amp;&amp; .venv/bin/python -m pytest -q</code></pre></li>
+  <li><strong>Run the stress block</strong> inside <code>tmux</code> (216 runs, about 1.2 hours, about 1.5 USD, resumable). The expectations are in E28.
+<pre><code>source ~/.mccr_env &amp;&amp; .venv/bin/python scripts/run_matrix.py --backend tritonai --tasks eval --blocks M0,M2,M1,M3 --cells stress_cells --runs runs/main 2&gt;&amp;1 | tee -a ~/stress.log</code></pre>
+    <div class="callout warn"><p>If a run folder is left unfinished, the runner reports it. Move the folder aside. Never delete it.</p></div></li>
+  <li><strong>Build the tables</strong> into a new folder, then build the report tables. Commit <code>results/</code> and sync.
+<pre><code>.venv/bin/python scripts/analyze.py --runs runs/main --out results/stress_tables &amp;&amp; .venv/bin/python scripts/report_tables.py --runs-csv results/stress_tables/runs.csv</code></pre></li>
+  <li><strong>Analyse the stress block</strong> against each expectation in E28, in a new entry (E29).</li>
+  <li><strong>Check why runs got slower</strong> (per-call latency and the rate-limit headers). This is still open in the decision log.</li>
+  <li><strong>Write the Phase 1 report.</strong> The outline is in the details below (section 18 of the project document). Report the matrix as the main result and the stress block apart.</li>
+</ol>
+
+<h3>Open decisions</h3>
+<div class="cards">
+  <div class="card"><h4><span class="chip ok">decided</span> The <code>enforce</code> block (36 runs)</h4><p>Dropped. The model attempted nothing forbidden in 108 adversarial runs, so <code>enforce</code> has nothing to block. The report states this. (E24, E27, decision log 2026-11-02.)</p></div>
+  <div class="card"><h4>The multi-case shift (Phase 2)</h4><p><strong>Idea:</strong> several aircraft on one shared board, linked by shared stock and tail history. A fault then reaches only part of the work, M1 leaves bad posts that later cases read, and M2 wipes valid work of other cases.</p><p><strong>Facts:</strong> this is where selective recovery can differ from wipe-all on more than cost. It needs new tasks, an orchestrator loop and a new oracle. (Decision log 2026-11-02.)</p><p>Decision owner: ________</p></div>
+  <div class="card"><h4>A stronger attack, or another model, for the adversarial cells</h4><p><strong>Options:</strong> keep the attack as it is and report &ldquo;model declined&rdquo; as the finding, or add an extra cell on the dev tasks.</p><p><strong>Facts:</strong> nothing has been changed. Any change needs its own log entry first. (E11.)</p><p>Decision owner: ________</p></div>
+  <div class="card"><h4>Better verifiers for M3 (Phase 2)</h4><p><strong>Options:</strong> a prompt that makes the consistency check explicit; a verifier that can read the files the role may read; a verifier from a <em>different model</em>. Log cached tokens to see if caching matters.</p><p><strong>Facts:</strong> nothing is measured yet. Test at least two models, with the same faults and budget. Write expectations first. (E20, E21.)</p><p>Decision owner: ________</p></div>
+  <div class="card"><h4>A second API key to halve the matrix time</h4><p><strong>Options:</strong> one process with one key (about 4 hours), or a second person runs the other half with their own key (<code>--slice</code>).</p><p><strong>Facts:</strong> one process already uses about 75 of the 100 allowed requests per minute. (E12, E22.)</p><p>Decision owner: ________</p></div>
+  <div class="card"><h4>Questions still open in the decision log</h4><p>Does the $50 key budget reset monthly? Does the course accept the synthetic domain and directory snapshots (ask the TA)? Who are the two members? Why did runs get slower?</p><p>Decision owner: ________</p></div>
+</div>
+
+<h3>Phase 2 plan</h3>
+<ul>
+  <li><strong>2A (Nov 5 to 18):</strong> provenance tracking, M4 and the ablations, tested on scripted runs where the answer is known exactly.</li>
+  <li><strong>2B (Nov 19 to Dec 1):</strong> M4 against M1 to M3 on identical fault schedules; the precision variants; over- and under-invalidation; overhead.</li>
+  <li><strong>2C (Dec 1 to 5, only if 2B is complete):</strong> validated retractions.</li>
+  <li><strong>2D (Dec 5 to 10):</strong> final report and presentation.</li>
+</ul>
+
+<h3>Known weak points</h3>
+<ul>
+  <li>The domain is synthetic, there is one model, and the model is hosted and can change behind the same name.</li>
+  <li>The task set is small: six eval tasks, 3 repeats per cell.</li>
+  <li>The adversarial cells show no unsafe behaviour on this model. The model declined both attacks in all 108 runs.</li>
+  <li>Repeats are correlated samples. T04 has model noise that can look like a fault effect.</li>
+  <li>The matrix faults were easy to recover from: transient, corrected by a newer post, and contradicting themselves. The stress cells were designed after the results, to test that explanation, and are reported apart.</li>
+  <li>Five agents in a chain: a fault at A1 taints 4 of 5, so selective recovery saves little unless the work is wider.</li>
+  <li>The new metrics were added after the matrix results (E26). <code>pass</code> stays the main measure.</li>
+  <li>M3 behaved as a format check, so it is a weak baseline. Its limit must be stated.</li>
+  <li>Prices are inferred from one call and from measured costs. The model hub could not be read.</li>
+  <li>Scripted results are not evidence about the model. Never report them.</li>
+  <li>Phase 2 (<code>provenance.py</code>, M4) and the report figures do not exist yet.</li>
+</ul>
+
+<h3>Owners and contacts</h3>
+<p>The sources contain no names. Fill these in by hand. The page does not save what you type.</p>
+<div class="tw owners"><table class="md"><thead><tr><th>Role</th><th>Name</th><th>Contact</th></tr></thead><tbody>
+<tr><td>Project owner</td><td><input aria-label="Project owner name"></td><td><input aria-label="Project owner contact"></td></tr>
+<tr><td>Member A (harness)</td><td><input aria-label="Member A name"></td><td><input aria-label="Member A contact"></td></tr>
+<tr><td>Member B (domain and evaluation)</td><td><input aria-label="Member B name"></td><td><input aria-label="Member B contact"></td></tr>
+<tr><td>AWS account contact</td><td><input aria-label="AWS contact name"></td><td><input aria-label="AWS contact"></td></tr>
+<tr><td>Course TA</td><td><input aria-label="TA name"></td><td><input aria-label="TA contact"></td></tr>
+</tbody></table></div>
+
+<details class="deep"><summary>Details: phases, entry and exit criteria (source text)</summary><div class="inner">
+{{IMPL:13}}
+</div></details>
+<details class="deep"><summary>Details: team split (source text)</summary><div class="inner">
+{{IMPL:14}}
+</div></details>
+<details class="deep"><summary>Details: reporting plan, figures and threats to validity (source text)</summary><div class="inner">
+{{IMPL:18}}{{GUIDE:9}}
+</div></details>

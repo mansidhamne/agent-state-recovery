@@ -1,0 +1,42 @@
+{
+  "MEL-36-01": {
+    "component": "BLEED-PRV-1",
+    "category": "B",
+    "conditions_met": true
+  },
+  "MEL-36-02": {
+    "component": "BLEED-HPV-1",
+    "category": "B",
+    "conditions_met": true
+  },
+  "MEL-21-01": {
+    "component": "PACK-FCV-2",
+    "category": "B",
+    "conditions_met": true
+  },
+  "MEL-21-02": {
+    "component": "PACK-RAD-2",
+    "category": "NO_GO",
+    "conditions_met": true
+  },
+  "MEL-28-01": {
+    "component": "FUEL-BP-3",
+    "category": "B",
+    "conditions_met": true
+  },
+  "MEL-28-02": {
+    "component": "FUEL-XV-3",
+    "category": "B",
+    "conditions_met": true
+  },
+  "MEL-29-01": {
+    "component": "HYD-EDP-1",
+    "category": "B",
+    "conditions_met": true
+  },
+  "MEL-29-02": {
+    "component": "HYD-ACMP-1",
+    "category": "B",
+    "conditions_met": true
+  }
+}

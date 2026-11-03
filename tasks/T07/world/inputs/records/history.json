@@ -1,0 +1,15 @@
+{
+  "window_days": 30,
+  "events": [
+    {
+      "tail": "N8F07",
+      "component": "FUEL-XV-3",
+      "days_ago": 70
+    },
+    {
+      "tail": "N8F99",
+      "component": "FUEL-XV-3",
+      "days_ago": 2
+    }
+  ]
+}

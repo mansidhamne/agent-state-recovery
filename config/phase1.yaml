@@ -1,0 +1,13 @@
+eval_tasks: [T03, T04, T05, T06, T07, T08]
+dev_tasks: [T01, T02]
+cells: [FA1xA1, FA2xseed, FA3xA1, FA3xA2, FA3xA3, FD1xA2, FD2xA3]
+adversarial_cells: [FD1xA2, FD2xA3]
+# Stress cells (doc sections 7.4 and 12.3), run with --cells stress_cells and reported apart.
+stress_cells: [FA4xA1, FA5xA1, FA6xA1]
+reps: 3
+noise_floor_reps: 2
+concurrency: 1  # one process already uses about 75 of the 100 requests per minute per key
+step_cap: 12
+bm25_k: 4
+# Priority order if quota is short (doc section 12.3).
+priority: [clean, M0, M2, M1, M3, enforce]

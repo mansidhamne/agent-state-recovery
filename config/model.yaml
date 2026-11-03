@@ -1,0 +1,11 @@
+model: api-glm-5.3-flash
+temperature: 0
+max_tokens: 1024
+timeout_s: 120
+max_retries: 4
+use_seed: true  # the Phase 0 probe showed the route accepts seed
+# Inferred from one call's cost headers (about $0.15 and $0.50 per million tokens), not read
+# from the Model Hub. The harness logs the measured cost of every call, which is what the
+# PoC gate uses. These are only a fallback when no cost was logged.
+price_input_per_m: 0.15
+price_output_per_m: 0.50

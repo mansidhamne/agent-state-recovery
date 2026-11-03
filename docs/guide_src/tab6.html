@@ -1,0 +1,42 @@
+<h2>Run it</h2>
+<p class="lead">All model runs happen on a cloud machine (an AWS EC2 instance). The Mac is for editing code and documents. GitHub is the source of truth for code. The order of syncing matters.</p>
+<div class="callout warn"><p>Real AWS identifiers are replaced here by placeholders such as <code>&lt;NEW_INSTANCE_ID&gt;</code>. The real values are in <code>aws/README.md</code>. The AWS keys are temporary and live in <code>.env</code> on the Mac only. Never put a key in the repo.</p></div>
+
+<h3>The sync routine</h3>
+{{FIG:sync}}
+<h3>The instance life cycle</h3>
+{{FIG:lifecycle}}
+
+<h3>A working day, step by step</h3>
+<ol>
+  <li><strong>Mac:</strong> load the AWS keys and check them: <code>set -a; source .env; set +a</code>, then <code>aws sts get-caller-identity</code>. An <code>ExpiredToken</code> error means you need new keys.</li>
+  <li><strong>Mac:</strong> start the instance with <code>aws ec2 start-instances --region &lt;REGION&gt; --instance-ids &lt;NEW_INSTANCE_ID&gt;</code>. Read its new public IP with <code>describe-instances</code> and put it under <code>Host mccr-2</code> (<code>HostName</code>) in <code>~/.ssh/config</code>.</li>
+  <li><strong>Mac:</strong> connect with <code>ssh mccr-2</code>, or use the host <code>mccr-2</code> in VS Code Remote-SSH.</li>
+  <li><strong>Mac, then instance:</strong> push your changes, then on the instance run <code>cd ~/mcc-recovery &amp;&amp; git pull origin main</code>.</li>
+  <li><strong>Instance:</strong> run long jobs inside <code>tmux</code>. The key for the model is read from <code>~/.mccr_env</code>. A rerun of the matrix command skips finished runs.</li>
+  <li><strong>Instance:</strong> pull again, then commit and push only <code>results/</code>. <strong>Mac:</strong> pull.</li>
+  <li><strong>Mac:</strong> stop the instance when you finish: <code>aws ec2 stop-instances ...</code>. A running instance costs about $2 per day.</li>
+</ol>
+
+<h3>Things that go wrong</h3>
+<ul>
+  <li><strong>SSH times out.</strong> Your own IP probably changed. The security group allows SSH from one IP only. The runbook shows how to add the new one.</li>
+  <li><strong>The public IP changes after every start.</strong> Update <code>~/.ssh/config</code>.</li>
+  <li><strong>Stopping ends running jobs</strong> (including <code>tmux</code>). The disk stays. <strong>Terminating deletes the disk for good.</strong> Push code and copy <code>runs/</code> off first.</li>
+  <li><strong>Two instances exist.</strong> The old one (<code>mccr</code>) is kept and not deleted. The runbook commands now use the new one (<code>mccr-2</code>). Stop whichever you are not using.</li>
+  <li><strong>The new instance uses a different image with system Python 3.14</strong> (exact version not recorded). The setup steps in the runbook were written for Python 3.12. Whether the project builds and passes its tests there is <em>unverified</em>. Run the tests first.</li>
+  <li><strong>Runs got slower during the shake-out</strong> and the cause is unknown (E22).</li>
+</ul>
+
+<h3>Working rules for an analyst session</h3>
+<p>The project keeps a clear split. An analyst session may read files, analyse results, edit files and add entries to the experiment log. It must <strong>not</strong> run commands, commit or push, touch AWS, read the key files, or edit anything inside <code>runs/</code> or an old log entry. The person in charge runs every command. The full list is in the details below.</p>
+
+<details class="deep"><summary>Details: the AWS runbook (source text, identifiers replaced)</summary><div class="inner">
+{{AWS:ALL}}
+</div></details>
+<details class="deep"><summary>Details: AWS and TritonAI facts, EC2 setup and the probe script (source text)</summary><div class="inner">
+{{IMPL:16}}
+</div></details>
+<details class="deep"><summary>Details: the analyst's role, the machines, safe changes, commands and log rules (source text)</summary><div class="inner">
+{{GUIDE:1}}{{GUIDE:3}}{{GUIDE:8}}{{GUIDE:10}}{{GUIDE:11}}
+</div></details>

@@ -1,0 +1,11 @@
+fault_set,fault_class,cell,dependent,affected_static,pass
+base,accidental,FA1xA1,1.0,3.0555555555555554,0.0
+base,accidental,FA2xseed,0.2222222222222222,3.2222222222222223,0.7777777777777778
+base,accidental,FA3xA1,0.7777777777777778,0.0,0.2222222222222222
+base,accidental,FA3xA2,0.8888888888888888,0.0,0.1111111111111111
+base,accidental,FA3xA3,1.0,0.0,0.0
+base,adversarial,FD1xA2,0.0,4.0,1.0
+base,adversarial,FD2xA3,0.05555555555555555,2.0,0.9444444444444444
+stress,accidental,FA4xA1,1.0,4.0,0.0
+stress,accidental,FA5xA1,1.0,3.0555555555555554,0.0
+stress,accidental,FA6xA1,1.0,3.111111111111111,0.0

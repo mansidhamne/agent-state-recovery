@@ -1,0 +1,34 @@
+{
+  "PN-36-1187": {
+    "station_qty": 1,
+    "lead_time_days": 4
+  },
+  "PN-36-2204": {
+    "station_qty": 1,
+    "lead_time_days": 8
+  },
+  "PN-21-3310": {
+    "station_qty": 4,
+    "lead_time_days": 9
+  },
+  "PN-21-3325": {
+    "station_qty": 4,
+    "lead_time_days": 3
+  },
+  "PN-28-4401": {
+    "station_qty": 1,
+    "lead_time_days": 2
+  },
+  "PN-28-4417": {
+    "station_qty": 1,
+    "lead_time_days": 5
+  },
+  "PN-29-5502": {
+    "station_qty": 0,
+    "lead_time_days": 9
+  },
+  "PN-29-5519": {
+    "station_qty": 1,
+    "lead_time_days": 9
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "tail": "N8F08",
+  "fault_message": "HYD SYS LO PR",
+  "check_result": "electric pump overheat",
+  "flight_phase": "pre-departure",
+  "repair_recorded_complete": false,
+  "crew_notes": "HYD SYS LO PR shown at engine start."
+}

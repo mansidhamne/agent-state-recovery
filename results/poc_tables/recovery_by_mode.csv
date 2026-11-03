@@ -1,0 +1,7 @@
+fault_class,mode,runs,passed,correct_ignoring_irreversible,recomputed_stages,llm_calls,verify_calls,irreversible,recovery_wall_ms
+accidental,M0,20,0.25,0.25,0.0,16.6,0.0,0.2,
+accidental,M1,2,0.5,0.5,5.0,34.0,0.0,1.5,15082.9382335005
+accidental,M2,2,1.0,1.0,5.0,31.5,0.0,1.0,11589.46153299894
+adversarial,M0,8,1.0,1.0,0.0,15.625,0.0,0.5,
+adversarial,M1,2,1.0,1.0,5.0,31.5,0.0,1.0,13947.468045998903
+adversarial,M2,2,1.0,1.0,5.0,30.5,0.0,1.0,11914.11259150027

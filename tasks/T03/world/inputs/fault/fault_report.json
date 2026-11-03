@@ -1,0 +1,8 @@
+{
+  "tail": "N8F03",
+  "fault_message": "AIR BLEED FAULT",
+  "check_result": "HPV stuck closed",
+  "flight_phase": "pre-departure",
+  "repair_recorded_complete": false,
+  "crew_notes": "AIR BLEED FAULT shown at engine start."
+}

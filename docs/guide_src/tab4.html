@@ -1,0 +1,36 @@
+<h2>Recovery methods</h2>
+<p class="lead">After a faulty run, a recovery method is told which artifact is faulty (<code>F</code>). It then tries to repair the result. We compare four methods in Phase 1 and build the fifth, selective recovery, in Phase 2.</p>
+{{FIG:modes}}
+<div class="tw"><table class="md"><thead><tr><th>Mode</th><th>Board</th><th>Files</th><th>Agents rerun</th><th>What it tests</th></tr></thead><tbody>
+<tr><td>M0 no recovery</td><td>as is</td><td>as is</td><td>none</td><td>how far the fault spreads</td></tr>
+<tr><td>M1 restart, keep state</td><td>kept, including the faulty post</td><td>as is</td><td>all</td><td>does the old shared state poison a clean rerun?</td></tr>
+<tr><td>M2 restart, wipe all</td><td>emptied</td><td>back to the start; faulty input replaced by the clean one</td><td>all</td><td>correct, but wasteful</td></tr>
+<tr><td>M3 always-verify</td><td>fresh run with the fault active</td><td>fresh</td><td>all</td><td>cost and miss rate of prevention</td></tr>
+<tr><td>M4 selective (Phase 2)</td><td>dead-mark the tainted posts</td><td>undo tainted writes; replace the faulty input</td><td>only the tainted ones</td><td>the main claim</td></tr>
+</tbody></table></div>
+<p>Two ablations are planned for Phase 2: M4 without restoring files, and wipe-all without restoring files. A message that was already sent can never be recalled. Every mode lists it as <strong>irreversible</strong> and never counts it as recovered. The report treats it as needing compensation, for example rotating an exposed credential.</p>
+
+<h3>M3 in plain words</h3>
+<p>M3 is not a repair. It is a prevention baseline. Before an agent writes a post or a file, the harness asks the same model: &ldquo;Is this acceptable?&rdquo; A &ldquo;no&rdquo; blocks the write. The original hypothesis (H2c) said it would catch some faults at a high cost and miss others.</p>
+{{FIG:m3}}
+<div class="callout"><p><strong>What we learned (log entries E13 to E21).</strong></p>
+<p>1. The first test injected the FA1 fault <em>after</em> the check, so the check could never see it. That was a gap in our plan, now fixed.</p>
+<p>2. The first verifier prompt raised false alarms on ordinary &ldquo;do not order&rdquo; notes. We made the prompt more precise and passed it the role's job description.</p>
+<p>3. After the fixes, the verifier raised 0 rejections in 149 calls. It accepted two wrong components that contradicted their own check result, giving only &ldquo;all required fields present&rdquo; as the reason. In short, it acted as a <strong>format check</strong>.</p>
+<p>4. M3 cost about 48% more calls, 33% more money and 63% more time per run, and changed no grades.</p>
+<p>The decision for Phase 1 is to keep M3 as specified and to state its limit in the report. Better verifiers are Phase 2 work. This main claim, selective recovery, does not depend on M3.</p></div>
+
+<h3>M4 in plain words (Phase 2, not built)</h3>
+<p>Treat every read and write as an edge in a graph. Start from the faulty artifact <code>F</code>. Mark every invocation that read a tainted item, and everything it wrote. Then dead-mark the tainted posts, undo the tainted file writes, and rerun only the tainted invocations in their original order. Untainted work stays.</p>
+{{FIG:taint}}
+<div class="tw"><table class="md"><thead><tr><th>Precision variant</th><th>Rule</th><th>Extra cost</th></tr></thead><tbody>
+<tr><td>L-run</td><td>any read taints all of that invocation's outputs</td><td>none</td></tr>
+<tr><td>L-window</td><td>only outputs written after the tainted read</td><td>finer logging only</td></tr>
+<tr><td>L-cf</td><td>rerun with <code>F</code> removed and keep it if the output does not change</td><td>1 extra invocation per candidate</td></tr>
+<tr><td>L-attr (stretch)</td><td>drop the tainted posts from the context and compare</td><td>similar to L-cf</td></tr>
+</tbody></table></div>
+<p>A negative result is acceptable if it is well measured. For example, on a busy board, reading anything may taint nearly everything, so selective recovery would equal wipe-all unless the lineage is finer.</p>
+
+<details class="deep"><summary>Details: recovery modes and Phase 2 procedure (source text)</summary><div class="inner">
+{{IMPL:10}}{{IMPL:11}}
+</div></details>

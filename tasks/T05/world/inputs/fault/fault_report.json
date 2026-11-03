@@ -1,0 +1,8 @@
+{
+  "tail": "N8F05",
+  "fault_message": "PACK TEMP HIGH",
+  "check_result": "ram air door stuck",
+  "flight_phase": "pre-departure",
+  "repair_recorded_complete": false,
+  "crew_notes": "PACK TEMP HIGH shown at engine start."
+}

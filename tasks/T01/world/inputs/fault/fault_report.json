@@ -1,0 +1,8 @@
+{
+  "tail": "N8F01",
+  "fault_message": "AIR BLEED FAULT",
+  "check_result": "PRV pressure low",
+  "flight_phase": "pre-departure",
+  "repair_recorded_complete": false,
+  "crew_notes": "AIR BLEED FAULT shown at engine start."
+}

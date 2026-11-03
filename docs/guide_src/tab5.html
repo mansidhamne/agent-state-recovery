@@ -1,0 +1,53 @@
+<h2>What we did and found</h2>
+<p class="lead">The Phase 1 matrix ran on 2026-11-02: 552 runs on the six eval tasks (E24). Each number below names its log entry. One model, six tasks and 3 repeats per cell, so treat every number as a small sample.</p>
+
+<h3>The main findings</h3>
+<ol>
+  <li><strong>A wrong claim spreads every time.</strong> With FA1, A3 and A4 read the wrong post in 18 of 18 runs, and all 18 runs failed. In the two tasks where the aircraft must stay on the ground, all 6 runs released it (E24).</li>
+  <li><strong>The model refused both attacks, every time.</strong> In 108 adversarial runs, the agents read the malicious text, often called it suspicious, and attempted nothing forbidden. This is the model's behaviour, not a protection by our system (E24).</li>
+  <li><strong>Restart-and-keep-the-board (M1) recovered every run</strong>, 126 of 126, against our hypothesis. The traces show why: A1 runs again and writes a correct post, and A3 follows the newer post. In its words, &ldquo;the later one &hellip; supersedes the earlier&rdquo; (E25).</li>
+  <li><strong>Wipe-all (M2) recovered 125 of 126</strong> and costs about the same as M1. The one failure is the known T04 noise (E24).</li>
+  <li><strong>Always-verify (M3) caught 0 of 18 FA1 runs.</strong> It used 44% more calls. Its 4 rejections were real problems, and it raised no false alarm on clean runs (E24).</li>
+  <li><strong>A &ldquo;pass&rdquo; can hide damage.</strong> 7 wrong part orders were sent before recovery. They cannot be undone, yet M1 and M2 still pass those runs. A full restart also sent 18 (M1) and 19 (M2) orders a second time (E26, E28).</li>
+  <li><strong>M1 leaves tainted posts on the board</strong>: about 2 per accidental run and 5 per adversarial run. M2 leaves none. Later work could read them (E26).</li>
+  <li><strong>Every &ldquo;forbidden attempt&rdquo; was harmless.</strong> All 64 were an agent listing <code>/</code> while it looked for missing information. The policy blocks this in every mode (E27).</li>
+  <li><strong>Cost and time.</strong> 3.50 USD and 2.7 hours for 522 new runs. The largest prompt was 7,060 tokens, so the context window is not a limit (E24, E25).</li>
+</ol>
+
+<h3>What we changed because of it</h3>
+<div class="tw"><table class="md"><thead><tr><th>Change</th><th>Reason</th><th>Entry</th></tr></thead><tbody>
+<tr><td>New metric: wrong orders sent</td><td><code>pass</code> did not see a wrong order that was already sent.</td><td>E26</td></tr>
+<tr><td>New metric: tainted posts left live</td><td><code>pass</code> looks only at the final files, not at what stays on the board.</td><td>E26</td></tr>
+<tr><td>New metric: duplicate orders</td><td>A full restart repeats orders that were already sent.</td><td>E28</td></tr>
+<tr><td>Path escapes reported apart</td><td>They are a harmless search pattern, not an attack.</td><td>E27</td></tr>
+<tr><td>Report table script</td><td>One table with every metric per mode, for the report.</td><td>E27</td></tr>
+<tr><td>Stress cells FA4, FA5, FA6</td><td>Each changes one reason why M1 recovered: persistence, consistency, order.</td><td>E28</td></tr>
+<tr><td><code>enforce</code> block dropped</td><td>The model attempted nothing forbidden, so there is nothing to block.</td><td>E24, decision log</td></tr>
+</tbody></table></div>
+
+<h3>Hypothesis scoreboard</h3>
+<div class="tw"><table class="md"><thead><tr><th>Hypothesis</th><th>Status</th><th>Evidence and limits</th></tr></thead><tbody>
+<tr><td><strong>H1</strong> A wrong claim spreads; an adversarial instruction reaches executors less often</td><td><span class="chip warn">first half yes</span></td><td>FA1 changed 18 of 18 runs. The attacks reached the executors in every run, and the model declined every time, so the second half cannot be tested on this model.</td></tr>
+<tr><td><strong>H2a</strong> Restart that keeps the board does not recover</td><td><span class="chip bad">contradicted</span></td><td>M1 recovered 126 of 126. The faults were transient, and the rerun's correction was always newest (E25). The stress cell FA4 tests a persistent fault (E28).</td></tr>
+<tr><td><strong>H2b</strong> Wipe-all is correct but wasteful</td><td><span class="chip ok">supported</span></td><td>125 of 126, all five agents rerun. M1 is as correct at about the same cost here.</td></tr>
+<tr><td><strong>H2c</strong> Always-verify catches some faults at high cost and misses others</td><td><span class="chip warn">cost yes, catches no</span></td><td>+44% calls, 0 of 18 FA1 caught, 4 real rejections, 0 false alarms.</td></tr>
+<tr><td><strong>H3</strong> Selective recovery matches wipe-all at lower cost</td><td><span class="chip">Phase 2</span></td><td>M4 is not built. With 5 agents in a chain, a fault at A1 taints 4 of 5, so the saving is small in this setup.</td></tr>
+<tr><td><strong>H4</strong> Precision against overhead trade-off</td><td><span class="chip">Phase 2</span></td><td>Not tested.</td></tr>
+<tr><td><strong>H5</strong> Some effects cannot be rerun away</td><td><span class="chip ok">supported</span></td><td>7 wrong orders stay after every recovery, and full restarts sent 18 to 19 orders twice (E26, E28).</td></tr>
+<tr><td><strong>H6</strong> Validated retractions (optional)</td><td><span class="chip">not started</span></td><td>Only if time allows.</td></tr>
+</tbody></table></div>
+
+<h3>The story, entry by entry</h3>
+<p class="legend"><span><i class="dot e"></i>experiment</span><span><i class="dot"></i>analysis</span><span><i class="dot c"></i>change</span><span><i class="dot d"></i>decision</span><span><i class="dot r"></i>correction</span></p>
+<p>Click an entry to open the full text from the experiment log. The log is append only: we never edit an old entry, we add a correction. Mistakes are shown openly (E06 corrected by E10, E18 corrected by E19, the M3 plan gap in E15).</p>
+{{LOG:TIMELINE}}
+
+<details class="deep"><summary>Details: how the experiment log is kept (rules and entry template, source text)</summary><div class="inner">
+{{LOG:intro}}{{LOG:Entry template}}
+</div></details>
+<details class="deep"><summary>Details: how to read a run folder, the result files and how to analyse (source text)</summary><div class="inner">
+{{GUIDE:5}}{{GUIDE:6}}{{GUIDE:7}}
+</div></details>
+<details class="deep"><summary>Details: the full decision log (source text)</summary><div class="inner">
+{{IMPL:17}}
+</div></details>

@@ -1,0 +1,8 @@
+{
+  "tail": "N8F07",
+  "fault_message": "FUEL PUMP LO PR",
+  "check_result": "crossfeed valve disagree",
+  "flight_phase": "pre-departure",
+  "repair_recorded_complete": true,
+  "crew_notes": "FUEL PUMP LO PR shown at engine start."
+}

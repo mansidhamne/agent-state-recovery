@@ -1,0 +1,33 @@
+<h2>Glossary and source map</h2>
+<p class="lead">Words used in the project, and a table that shows where every section of the four source files appears on this page.</p>
+
+<h3>Glossary</h3>
+{{IMPL:19}}
+
+<h3>Terms added for this page</h3>
+<p>These terms are not in the glossary of the project document. The short meanings come from how the sources use them.</p>
+<div class="tw"><table class="md"><thead><tr><th>Term</th><th>Meaning here</th></tr></thead><tbody>
+<tr><td>STE</td><td>The plain style of this page: short sentences, one meaning per term, active voice.</td></tr>
+<tr><td>Access rules (ACL)</td><td>Which agent may read which folder. Always on. The sources call it the &ldquo;routing ACL&rdquo;.</td></tr>
+<tr><td>ReAct</td><td>The agent loop: think, call a tool, read the result, repeat (section 9.6).</td></tr>
+<tr><td>BM25</td><td>The word-matching ranking used for board search (section 9.5).</td></tr>
+<tr><td>Dev / eval tasks</td><td>T01 and T02 are for tuning. T03 to T08 are reported.</td></tr>
+<tr><td>Cell</td><td>One fault at one target. There are 7 matrix cells and 3 stress cells (FA4, FA5, FA6).</td></tr>
+<tr><td>Mode</td><td>A recovery or prevention method: M0 to M4.</td></tr>
+<tr><td>PoC</td><td>The Phase 1C proof-of-concept gate run on the dev tasks. It decides GO or NO-GO for the matrix.</td></tr>
+<tr><td>Shake-out</td><td>The clean block run on the eval tasks to check that they work with the real model (log entry E22).</td></tr>
+<tr><td>Matrix</td><td>The full set of planned runs, about 588 (section 12.3).</td></tr>
+<tr><td>Degraded run</td><td>A run where some agent ended with <code>step_cap</code>, <code>timeout</code> or <code>error</code>.</td></tr>
+<tr><td>Step cap</td><td>The most tool calls one agent may make. It is 12.</td></tr>
+<tr><td>Prompt hash</td><td>A short fingerprint of a prompt file. It shows that a prompt did not change.</td></tr>
+<tr><td>Manifest</td><td>The record of settings saved in every run folder.</td></tr>
+<tr><td>Verifier</td><td>The extra model call in M3 that checks a write before it happens.</td></tr>
+</tbody></table></div>
+
+<h3>Source map</h3>
+<p>Every section of the four source files is on this page. This table says where. The build script stops with an error if a section is missing.</p>
+{{MAP:all}}
+
+<details class="deep"><summary>Details: the analyst guide's document map and phases (source text)</summary><div class="inner">
+{{GUIDE:2}}{{GUIDE:intro}}
+</div></details>

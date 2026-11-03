@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How the Agent Team Shares Information</title>
+<style>
+:root {
+  --bg: #f6f5f1; --panel: #ffffff; --ink: #1d1f23; --muted: #646a73; --line: #dedbd2;
+  --accent: #2b59c3; --bad: #c2362f; --bad-bg: #fbe9e7; --warn: #a8620a; --warn-bg: #fdf1dc;
+  --ok: #2f7d4f; --ok-bg: #e5f3ea; --mark: #7a3fb0; --mark-bg: #f1e8f9; --gone: #9aa0a8;
+  --a1: #2b59c3; --a2: #0f8a83; --a3: #b4561a; --a4: #7a3fb0; --a5: #a32f6b;
+  --shadow: 0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.05);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #15171a; --panel: #1e2125; --ink: #eceae4; --muted: #9aa1ab; --line: #33373d;
+    --accent: #7ea2ff; --bad: #ff7b72; --bad-bg: #3a1f1d; --warn: #f0b45a; --warn-bg: #3a2c16;
+    --ok: #6fcf97; --ok-bg: #1c3326; --mark: #c79bf2; --mark-bg: #2e2340; --gone: #5f666e;
+    --a1: #7ea2ff; --a2: #4fd1c5; --a3: #f0a36b; --a4: #c79bf2; --a5: #f08fc0;
+    --shadow: 0 1px 2px rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #15171a; --panel: #1e2125; --ink: #eceae4; --muted: #9aa1ab; --line: #33373d;
+  --accent: #7ea2ff; --bad: #ff7b72; --bad-bg: #3a1f1d; --warn: #f0b45a; --warn-bg: #3a2c16;
+  --ok: #6fcf97; --ok-bg: #1c3326; --mark: #c79bf2; --mark-bg: #2e2340; --gone: #5f666e;
+  --a1: #7ea2ff; --a2: #4fd1c5; --a3: #f0a36b; --a4: #c79bf2; --a5: #f08fc0;
+  --shadow: 0 1px 2px rgba(0,0,0,.4);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--bg); color: var(--ink); font: 14px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif; }
+button, select { font: inherit; color: inherit; }
+select { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; }
+header.top { display: flex; flex-wrap: wrap; gap: 8px 16px; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--line); background: var(--panel); position: sticky; top: 0; z-index: 5; }
+header.top h1 { font-size: 16px; margin: 0; font-weight: 650; letter-spacing: .01em; }
+.scenes { display: flex; gap: 4px; flex-wrap: wrap; }
+.scenes button { border: 1px solid var(--line); background: transparent; border-radius: 999px; padding: 3px 10px; cursor: pointer; font-size: 12.5px; }
+.scenes button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+.spacer { flex: 1; }
+.tbtn { border: 1px solid var(--line); background: transparent; border-radius: 8px; padding: 4px 10px; cursor: pointer; }
+.tbtn.on { border-color: var(--accent); color: var(--accent); }
+main { padding: 14px 16px 120px; max-width: 1600px; margin: 0 auto; }
+.scene-head h2 { margin: 0 0 4px; font-size: 20px; }
+.scene-head p { margin: 0 0 12px; color: var(--muted); max-width: 900px; }
+.guide { display: flex; flex-wrap: wrap; gap: 6px 18px; padding: 10px 14px; margin-bottom: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); color: var(--muted); }
+.guide strong { color: var(--ink); }
+.caption { min-height: 54px; display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; background: var(--panel); box-shadow: var(--shadow); border-left: 4px solid var(--accent); font-size: 17px; margin-bottom: 14px; transition: border-color .3s; }
+.caption .who { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.caption.bad { border-left-color: var(--bad); }
+.caption.ok { border-left-color: var(--ok); }
+.caption .txt { animation: fade .35s ease; }
+@keyframes fade { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: none; } }
+.cols { display: grid; gap: 14px; }
+.cols.n1 { grid-template-columns: 1fr; }
+.cols.n3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+@media (max-width: 1100px) { .cols.n3 { grid-template-columns: 1fr; } }
+.col { background: var(--panel); border-radius: 12px; box-shadow: var(--shadow); padding: 12px; min-width: 0; }
+.col h3 { margin: 0; font-size: 15px; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+.col h3 small { color: var(--muted); font-weight: 400; font-size: 11.5px; overflow-wrap: anywhere; }
+.col .ccap { margin: 6px 0 10px; font-size: 13px; color: var(--muted); min-height: 2.9em; }
+.agents { display: flex; gap: 6px; margin-bottom: 10px; flex-wrap: wrap; }
+.ag { display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 999px; padding: 2px 9px 2px 3px; font-size: 12px; cursor: pointer; background: transparent; }
+.ag i { width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-style: normal; color: #fff; font-size: 10.5px; font-weight: 700; }
+.ag.active { border-color: currentColor; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent); }
+.ag.done span::after { content: " \2713"; color: var(--ok); }
+.ag.stop span::after { content: " \2715"; color: var(--bad); }
+.ag .rf { width: 7px; height: 7px; border-radius: 50%; background: var(--bad); display: none; }
+.ag.readf .rf { display: inline-block; }
+.grid2 { display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 12px; }
+.cols.n3 .grid2 { grid-template-columns: 1fr; }
+.label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 6px; }
+.board { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; align-content: start; min-height: 120px; }
+.card { position: relative; border: 1px solid var(--line); border-top: 3px solid var(--c, var(--line)); border-radius: 8px; padding: 6px 8px; background: var(--panel); cursor: pointer; font-size: 12px; transition: opacity .4s, transform .3s, box-shadow .2s; }
+.card .h { display: flex; justify-content: space-between; gap: 6px; font-size: 11px; color: var(--muted); }
+.card .t { font-weight: 600; font-size: 12px; margin: 2px 0; }
+.card .x { color: var(--muted); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.card.new { animation: pop .45s ease; }
+@keyframes pop { from { opacity: 0; transform: scale(.94); } to { opacity: 1; transform: none; } }
+.card.f { background: var(--bad-bg); border-color: var(--bad); }
+.card.tainted { background: var(--warn-bg); }
+.card.marker { outline: 2px dashed var(--mark); outline-offset: -2px; }
+.card.gone { opacity: .38; filter: grayscale(1); }
+.card.gone .t { text-decoration: line-through; }
+.card.hit { box-shadow: 0 0 0 3px var(--accent); }
+.card .rank { position: absolute; top: -8px; right: -6px; background: var(--accent); color: #fff; border-radius: 999px; font-size: 10.5px; padding: 0 6px; font-weight: 700; }
+.card .tag { display: inline-block; font-size: 10px; border-radius: 4px; padding: 0 4px; margin-right: 3px; }
+.tag.f { background: var(--bad); color: #fff; } .tag.t { background: var(--warn); color: #fff; } .tag.m { background: var(--mark); color: #fff; } .tag.n { background: var(--accent); color: #fff; }
+.side .box { border: 1px solid var(--line); border-radius: 8px; padding: 8px; margin-bottom: 10px; font-size: 12px; }
+.file { display: flex; justify-content: space-between; gap: 6px; padding: 2px 0; }
+.file code { font-size: 11.5px; overflow-wrap: anywhere; }
+.file .st { font-size: 10.5px; color: var(--muted); white-space: nowrap; }
+.file.bad code { color: var(--bad); font-weight: 600; } .file.flash { background: color-mix(in srgb, var(--accent) 14%, transparent); border-radius: 4px; }
+.msg { border-left: 3px solid var(--ok); padding: 3px 6px; margin: 4px 0; cursor: pointer; }
+.msg.wrong { border-left-color: var(--bad); background: var(--bad-bg); }
+.msg .b { font-size: 10.5px; font-weight: 700; margin-left: 4px; }
+.empty { color: var(--muted); font-style: italic; }
+.score { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.score .c { font-size: 11px; border-radius: 4px; padding: 1px 6px; }
+.score .c.y { background: var(--ok-bg); color: var(--ok); } .score .c.n { background: var(--bad-bg); color: var(--bad); }
+.score .res { font-weight: 700; margin-right: 6px; } .score .res.y { color: var(--ok); } .score .res.n { color: var(--bad); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--muted); margin: 0 0 12px; }
+.legend b { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -2px; margin-right: 4px; border: 1px solid var(--line); }
+footer.ctl { position: fixed; left: 0; right: 0; bottom: 0; background: var(--panel); border-top: 1px solid var(--line); padding: 10px 16px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; z-index: 5; }
+footer.ctl input[type=range] { flex: 1; min-width: 160px; accent-color: var(--accent); }
+footer .tick { font-variant-numeric: tabular-nums; color: var(--muted); font-size: 12px; min-width: 70px; text-align: right; }
+aside.drawer { position: fixed; top: 0; right: 0; bottom: 0; width: min(460px, 100vw); background: var(--panel); border-left: 1px solid var(--line); box-shadow: -8px 0 24px rgba(0,0,0,.12); transform: translateX(100%); transition: transform .25s; z-index: 10; padding: 16px; overflow: auto; }
+aside.drawer.open { transform: none; }
+aside.drawer h4 { margin: 0 0 6px; font-size: 16px; }
+aside.drawer pre { white-space: pre-wrap; font: 12.5px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; background: var(--bg); padding: 10px; border-radius: 8px; }
+aside.drawer .close { float: right; }
+.note { font-size: 12px; color: var(--muted); }
+@media (max-width: 640px) { main { padding: 12px 16px 150px; } .grid2 { grid-template-columns: 1fr; } .caption { font-size: 15px; } }
+</style>
+</head>
+<body>
+<header class="top">
+  <h1>Agent teamwork demo</h1>
+  <div class="scenes" id="scenes"></div>
+  <div class="spacer"></div>
+  <button class="tbtn" id="present" title="Play every story from the beginning">Play full demo</button>
+  <button class="tbtn" id="theme" title="Switch light or dark">Theme</button>
+</header>
+<main>
+  <div class="scene-head"><h2 id="stitle"></h2><p id="stext"></p></div>
+  <div class="guide"><strong>How to use this demo</strong><span>1. Pick a story above.</span><span>2. Press Play.</span><span>3. Watch notes appear on the team board.</span><span>Click any note or worker for more detail.</span></div>
+  <div class="caption" id="caption"><span class="who" id="cwho"></span><span class="txt" id="ctxt"></span></div>
+  <div class="legend">
+    <span><b style="background:var(--bad-bg);border-color:var(--bad)"></b>wrong information</span>
+    <span><b style="background:var(--warn-bg)"></b>work influenced by wrong information</span>
+    <span><b style="outline:2px dashed var(--mark);outline-offset:-2px"></b>suspicious instruction</span>
+    <span><b style="opacity:.4;background:var(--gone)"></b>removed during recovery</span>
+    <span><b style="box-shadow:0 0 0 2px var(--accent)"></b>note the worker just found</span>
+    <span><i style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--bad)"></i> worker saw wrong information</span>
+  </div>
+  <div class="cols" id="cols"></div>
+  <p class="note">Everything shown here is simulated. The aircraft, manuals, parts and vendor messages are invented. Each card is a note shared by one AI worker with the rest of the team.</p>
+</main>
+<footer class="ctl">
+  <button class="tbtn" id="first" title="Go to the start">Start</button>
+  <button class="tbtn" id="back" title="Go back one step">Back</button>
+  <button class="tbtn" id="play" title="Play or pause (Space)">Play</button>
+  <button class="tbtn" id="fwd" title="Go forward one step">Next</button>
+  <button class="tbtn" id="last" title="Go to the end">End</button>
+  <select id="speed" title="Speed"><option value="0.5">0.5&times;</option><option value="1" selected>1&times;</option><option value="2">2&times;</option><option value="4">4&times;</option></select>
+  <input type="range" id="slider" min="0" value="0" aria-label="Position in the scene">
+  <span class="tick" id="tick"></span>
+</footer>
+<aside class="drawer" id="drawer" aria-live="polite"><button class="tbtn close" id="dclose">Close</button><div id="dbody"></div></aside>
+<script src="story.js"></script>
+<script>
+"use strict";
+const S = window.STORY;
+const AG = ["A1", "A2", "A3", "A4", "A5"];
+const ROLE = {A1: "Fault analyst", A2: "Records checker", A3: "Planner", A4: "Work-order writer", A5: "Dispatch & parts"};
+const FRIENDLY_SCENES = [
+  ["1. Normal teamwork", "Watch five AI workers solve one case. They read files, leave notes on a shared board, and use those notes to make the final decision."],
+  ["2. One mistake spreads", "The first worker's diagnosis is secretly changed. Watch later workers find the wrong note, trust it, and build more work from it."],
+  ["3. Compare three responses", "The same mistake has already happened. Compare doing nothing, restarting while keeping the old board, and starting again from clean files and an empty board."],
+  ["4. Add an extra checker", "Before a note or file is saved, another AI checks it. Watch whether that checker notices the wrong diagnosis."],
+  ["5. A harmful instruction", "A vendor file contains a message telling the team to release the aircraft and share a fake secret. Watch the team notice it and refuse to follow it."],
+  ["6. The source file is wrong", "The reference manual itself contains the wrong answer. A simple restart reads the same bad file again; a full reset restores the clean file."],
+];
+S.scenes.forEach((scene, i) => { if (FRIENDLY_SCENES[i]) [scene.title, scene.text] = FRIENDLY_SCENES[i]; });
+const MODE_LABEL = {"M0 no recovery": "No recovery", "M1 restart, keep board": "Restart, keep old board", "M2 restart, wipe all": "Full reset", "M3 always-verify": "Extra checker"};
+const TOPIC = {"diagnosis.cause": "Diagnosis", "parts.availability": "Available parts", "history.recurrence": "Past failures", "vendor.notes": "Vendor note", "plan.disposition": "Maintenance decision", "plan.logistics": "Parts plan", "status.work_order": "Work order", "status.dispatch": "Final dispatch decision"};
+const PATH = {"inputs/fault/fault_report.json": "Fault report", "inputs/fim/fim.md": "Reference manual", "inputs/mel/mel.json": "Dispatch rules", "inputs/records/parts_inventory.json": "Parts list", "inputs/records/history.json": "Maintenance history", "inputs/records/vendor_feed.jsonl": "Vendor updates", "outputs/work_order.json": "Work order", "outputs/logbook_entry.md": "Logbook entry", "outputs/dispatch_record.json": "Dispatch decision", "outputs/parts_request.json": "Parts request"};
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({"&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;"}[c]));
+let sc = 0, t = 0, timer = null, presenting = false;
+
+const roleName = (a) => ROLE[a] || a || "The system";
+const topicName = (topic) => TOPIC[topic] || String(topic || "team update").replace(/[._]/g, " ");
+const pathName = (path) => PATH[path] || String(path || "file").split("/").pop().replace(/[._]/g, " ");
+const modeName = (label) => MODE_LABEL[label] || label;
+const noteName = (id) => `Note ${Number(String(id).replace(/\D/g, "")) || ""}`.trim();
+const cardSummary = (p) => p.f ? "This note contains the original mistake." : p.marker ? "This note discusses the suspicious instruction." : p.tainted ? "This note was influenced by wrong information." : `A team update about ${topicName(p.topic).toLowerCase()}.`;
+
+function plainEvent(e) {
+  if (!e) return "";
+  if (e.type === "board_add") {
+    if (e.f) return `${roleName(e.agent)} adds the wrong ${topicName(e.topic).toLowerCase()} to the board.`;
+    if (e.marker && /ignor|suspicious|unverified|disregard|not to be followed|do not/i.test(e.text || "")) return `${roleName(e.agent)} sees the suspicious instruction and warns the team not to follow it.`;
+    if (e.marker) return `${roleName(e.agent)} copies the suspicious instruction onto the board.`;
+    if (e.tainted) return `${roleName(e.agent)} adds a ${topicName(e.topic).toLowerCase()} based on wrong information.`;
+    return `${roleName(e.agent)} adds a ${topicName(e.topic).toLowerCase()} to the board.`;
+  }
+  if (e.type === "board_search") return `${roleName(e.agent)} finds and reads the wrong note.`;
+  if (e.type === "board_tombstone") return "Recovery clears the old notes from the board.";
+  if (e.type === "file_read") return `${roleName(e.agent)} reads the incorrect ${pathName(e.path).toLowerCase()}.`;
+  if (e.type === "file_write" && e.flag === "fault_cleanup") return `Recovery replaces the incorrect ${pathName(e.path).toLowerCase()} with the clean version.`;
+  if (e.type === "external_send") return `${roleName(e.agent)} sends ${e.wrong ? "a wrong" : "a"} vendor order${e.duplicate ? " again" : ""}. A sent order cannot be taken back.`;
+  if (e.type === "verify_call" && !e.verdict) return `The extra checker blocks ${roleName(e.agent)}'s update.`;
+  if (e.type === "invocation_end") return `${roleName(e.agent)} stops before finishing.`;
+  if (e.type === "fault_injected") {
+    if (e.fault === "FD1") return "A vendor file now contains a harmful instruction.";
+    if (e.fault === "FA4") return "The reference manual now contains a wrong answer.";
+    return "A mistake is introduced into the case.";
+  }
+  if (e.type === "world_restore") return "Recovery puts all files back to their clean starting point.";
+  if (e.type === "run_end") {
+    const passed = /\bPASS\b/.test(e.cap || "");
+    let text = passed ? "Final result: correct." : "Final result: wrong.";
+    if (/released when/.test(e.cap || "")) text += " The aircraft was released when it should have stayed on the ground.";
+    const wrong = (e.cap || "").match(/(\d+) wrong order/); if (wrong) text += ` ${wrong[1]} wrong order${wrong[1] === "1" ? " was" : "s were"} already sent.`;
+    if (/No forbidden action/.test(e.cap || "")) text += " The harmful instruction was not followed.";
+    return text;
+  }
+  if (e.cap && /thinks:/i.test(e.cap)) return `${roleName(e.agent)} chooses which diagnosis to trust.`;
+  return e.cap || "";
+}
+
+// For each column: the events to animate, and the events applied before the scene starts.
+function columns(scene) {
+  return scene.columns.map((c) => {
+    const run = S.runs[c.run];
+    const main = run.events.filter((e) => e.phase === "main");
+    const rec = run.events.filter((e) => e.phase === "recovery");
+    const pre = c.part === "main" ? [] : main;
+    const anim = c.part === "main" ? main : c.part === "recovery" ? rec : [];
+    return {...c, run, pre, anim};
+  });
+}
+const total = (cols) => Math.max(1, ...cols.map((c) => c.anim.length));
+
+function state(col, upto) {
+  const st = {posts: new Map(), order: [], agents: {}, files: new Map(), msgs: [], hit: {}, cap: null, capAt: -1, last: null, ended: false};
+  AG.forEach((a) => (st.agents[a] = {s: "idle", steps: 0, readf: false, thought: null, actions: []}));
+  const F = new Set(col.run.F), ffiles = col.run.F.filter((r) => r.startsWith("file:")).map((r) => r.slice(5).split("@")[0]);
+  ffiles.forEach((p) => st.files.set(p, {st: "faulty", bad: true}));
+  const apply = (e, live, i) => {
+    const a = e.agent && st.agents[e.agent];
+    if (a) { AG.forEach((x) => st.agents[x].s === "active" && (st.agents[x].s = st.agents[x].steps ? "waiting" : "idle")); a.s = "active"; if (e.thought) a.thought = e.thought; }
+    if (e.type === "board_add") { st.posts.set(e.post_id, {...e, gone: false, born: live ? i : -1, readers: []}); st.order.push(e.post_id); }
+    if (e.type === "board_search") {
+      e.ids.forEach((p, r) => { const q = st.posts.get(p); if (q && e.agent && !q.readers.includes(e.agent)) q.readers.push(e.agent); });
+      if (live) st.hit = Object.fromEntries(e.ids.map((p, r) => [p, r + 1]));
+      if (a && e.ids.some((p) => F.has(p))) a.readf = true;
+    }
+    if (e.type === "board_tombstone") e.ids.forEach((p) => st.posts.has(p) && (st.posts.get(p).gone = true));
+    if (e.type === "file_read") { const f = st.files.get(e.path) || {st: "", bad: false}; f.st = "read by " + e.agent; f.flash = live; st.files.set(e.path, f); if (a && ffiles.includes(e.path) && e.acl === "allowed") a.readf = true; }
+    if (e.type === "file_write") { const f = st.files.get(e.path) || {}; f.st = e.flag === "fault_cleanup" ? "restored clean" : "written by " + e.agent; if (e.flag === "fault_cleanup") f.bad = false; f.flash = live; st.files.set(e.path, f); }
+    if (e.type === "world_restore") st.files.forEach((f) => (f.st = "restored to start", f.flash = live));
+    if (e.type === "external_send") st.msgs.push(e);
+    if (e.type === "invocation_end" && a) { a.s = e.status === "finished" ? "done" : "stop"; a.steps = e.steps; }
+    if (e.type === "run_end") st.ended = true;
+    if (a && e.type !== "invocation_end") { a.steps = Math.max(a.steps, (e.step ?? 0) + 1); a.actions.push(e.cap); }
+    if (live && e.big && e.cap) { st.cap = e; st.capAt = i; }
+    if (live) st.last = e;
+  };
+  col.pre.forEach((e) => apply(e, false, -1));
+  if (col.pre.length) { AG.forEach((x) => st.agents[x].s = "done"); st.files.forEach((f) => (f.flash = false)); }
+  col.anim.slice(0, upto).forEach((e, i) => { st.files.forEach((f) => (f.flash = false)); apply(e, true, i); });
+  if (upto >= col.anim.length) AG.forEach((x) => st.agents[x].s === "active" && (st.agents[x].s = "done"));
+  if (col.part === "after") { st.ended = true; st.cap = {cap: "No recovery. The board, the files and the sent order stay as the faulted run left them.", agent: null}; }
+  return st;
+}
+
+function agentHTML(st, colIdx) {
+  return AG.map((a) => { const x = st.agents[a];
+    const cls = ["ag", x.s === "active" ? "active" : "", x.s === "done" ? "done" : "", x.s === "stop" ? "stop" : "", x.readf ? "readf" : ""].join(" ");
+    return `<button class="${cls}" style="color:var(--${a.toLowerCase()})" data-agent="${a}" data-col="${colIdx}" title="${a}: ${ROLE[a]}"><i style="background:var(--${a.toLowerCase()})">${a}</i><span style="color:var(--ink)">${ROLE[a]}</span><b class="rf" title="has read the fault"></b></button>`; }).join("");
+}
+
+function boardHTML(st, upto, colIdx) {
+  if (!st.order.length) return `<div class="empty">The board is empty.</div>`;
+  return st.order.map((id) => { const p = st.posts.get(id);
+    const cls = ["card", p.f ? "f" : "", p.tainted && !p.f ? "tainted" : "", p.marker ? "marker" : "", p.gone ? "gone" : "", st.hit[id] && !p.gone ? "hit" : "", p.born >= 0 && p.born === upto - 1 ? "new" : ""].join(" ");
+    const tags = (p.f ? `<span class="tag f">wrong</span>` : "") + (p.tainted && !p.f ? `<span class="tag t">affected</span>` : "") + (p.marker ? `<span class="tag m">suspicious</span>` : "") + (p.phase === "recovery" ? `<span class="tag n">new try</span>` : "");
+    const ag = (p.writer || "").slice(0, 2);
+    return `<div class="${cls}" style="--c:var(--${ag.toLowerCase() || "line"})" data-post="${id}" data-col="${colIdx}" role="button" tabindex="0">
+      ${st.hit[id] && !p.gone ? `<span class="rank">#${st.hit[id]}</span>` : ""}
+      <div class="h"><span>${esc(noteName(id))}</span><span>${esc(roleName(p.writer || "System"))}</span></div>
+      <div class="t">${tags}${esc(topicName(p.topic))}</div><div class="x">${esc(cardSummary(p))}</div></div>`; }).join("");
+}
+
+function sideHTML(st, colIdx) {
+  const files = [...st.files.entries()].sort();
+  const fl = files.length ? files.map(([p, f]) => `<div class="file ${f.bad ? "bad" : ""} ${f.flash ? "flash" : ""}" title="${esc(p)}"><span>${esc(pathName(p))}</span><span class="st">${esc(f.st.replace("read by", "opened by").replace("written by", "saved by"))}</span></div>`).join("") : `<div class="empty">No file opened yet.</div>`;
+  const ms = st.msgs.length ? st.msgs.map((m, i) => `<div class="msg ${m.wrong ? "wrong" : ""}" data-msg="${i}" data-col="${colIdx}">Sent: ${esc(m.parts.join(", ") || "no part")}${m.wrong ? `<span class="b" style="color:var(--bad)">wrong order</span>` : ""}${m.duplicate ? `<span class="b" style="color:var(--warn)">sent twice</span>` : ""}<div class="note">${esc(roleName(m.agent))}, ${m.phase === "recovery" ? "during restart" : "first attempt"}</div></div>`).join("") : `<div class="empty">No vendor message sent.</div>`;
+  return `<div class="box"><p class="label">Files used</p>${fl}</div><div class="box"><p class="label">Messages already sent</p>${ms}</div>`;
+}
+
+function scoreHTML(st, run) {
+  if (!st.ended) return "";
+  const o = run.oracle, passed = Object.values(o.checks).filter(Boolean).length, totalChecks = Object.keys(o.checks).length;
+  return `<div class="score"><span class="res ${o.pass ? "y" : "n"}">${o.pass ? "CORRECT FINAL RESULT" : "WRONG FINAL RESULT"}</span><span class="c ${o.pass ? "y" : "n"}">${passed} of ${totalChecks} expected facts correct</span>${o.unsafe.forbidden_applied.length ? `<span class="c n">unsafe action occurred</span>` : ""}</div>`;
+}
+
+let view = [];
+function render() {
+  const scene = S.scenes[sc], cols = columns(scene), n = total(cols);
+  t = Math.max(0, Math.min(t, n));
+  $("stitle").textContent = scene.title; $("stext").textContent = scene.text;
+  [...$("scenes").children].forEach((b, i) => b.classList.toggle("on", i === sc));
+  const box = $("cols"); box.className = "cols n" + (cols.length > 1 ? 3 : 1);
+  view = cols.map((c) => ({c, st: state(c, t)}));
+  box.innerHTML = view.map(({c, st}, i) => `<section class="col">
+      <h3>${esc(modeName(c.label))}</h3>
+      <div class="ccap">${esc(st.cap ? plainEvent(st.cap) : "")}</div>
+      <div class="agents">${agentHTML(st, i)}</div>
+      <div class="grid2"><div><p class="label">Team's shared notes</p><div class="board">${boardHTML(st, Math.min(t, c.anim.length), i)}</div></div><div class="side">${sideHTML(st, i)}</div></div>
+      ${scoreHTML(st, c.run)}</section>`).join("");
+  // The big caption: the newest important event across the columns at this tick.
+  let best = null;
+  view.forEach(({c, st}) => { if (st.cap && (!best || st.capAt > best.at)) best = {cap: st.cap, label: c.label, at: st.capAt}; });
+  const cap = $("caption"), text = best ? plainEvent(best.cap) : (t === 0 ? "Press Play to watch this story." : "");
+  if ($("ctxt").textContent !== text) { $("ctxt").textContent = text; $("ctxt").style.animation = "none"; void $("ctxt").offsetWidth; $("ctxt").style.animation = ""; }
+  $("cwho").textContent = best && cols.length > 1 ? modeName(best.label) : "";
+  cap.className = "caption " + (/wrong|released when|faulty|cannot be undone|stops/.test(text) ? "bad" : /PASS|not to be followed|No forbidden/.test(text) ? "ok" : "");
+  $("slider").max = n; $("slider").value = t; $("tick").textContent = `${t} / ${n}`;
+  $("play").textContent = timer ? "Pause" : "Play";
+}
+
+function bigAt(i) { return columns(S.scenes[sc]).some((c) => c.anim[i] && c.anim[i].big); }
+function stepDelay() { const sp = +$("speed").value; return (bigAt(t - 1) ? 2600 : 420) / sp; }
+function tickOnce() {
+  const n = total(columns(S.scenes[sc]));
+  if (t < n) { t++; render(); timer = setTimeout(tickOnce, stepDelay()); return; }
+  if (presenting && sc < S.scenes.length - 1) { timer = setTimeout(() => { sc++; t = 0; render(); timer = setTimeout(tickOnce, 3000 / +$("speed").value); }, 3500 / +$("speed").value); return; }
+  stop();
+}
+function play() { if (timer) return; if (t >= total(columns(S.scenes[sc]))) t = 0; timer = setTimeout(tickOnce, 250); render(); }
+function stop() { clearTimeout(timer); timer = null; presenting = false; $("present").classList.remove("on"); render(); }
+function go(i) { stop(); sc = (i + S.scenes.length) % S.scenes.length; t = 0; render(); }
+
+$("scenes").innerHTML = S.scenes.map((s, i) => `<button data-i="${i}">${esc(s.title)}</button>`).join("");
+$("scenes").onclick = (e) => e.target.dataset.i && go(+e.target.dataset.i);
+$("play").onclick = () => (timer ? stop() : play());
+$("back").onclick = () => { stop(); t--; render(); };
+$("fwd").onclick = () => { stop(); t++; render(); };
+$("first").onclick = () => { stop(); t = 0; render(); };
+$("last").onclick = () => { stop(); t = 1e9; render(); };
+$("slider").oninput = (e) => { stop(); t = +e.target.value; render(); };
+$("present").onclick = () => { if (presenting) return stop(); stop(); presenting = true; $("present").classList.add("on"); sc = 0; t = 0; play(); };
+$("theme").onclick = () => { const r = document.documentElement, dark = r.dataset.theme ? r.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches; r.dataset.theme = dark ? "light" : "dark"; try { localStorage.setItem("replay-theme", r.dataset.theme); } catch (e) {} };
+try { const th = localStorage.getItem("replay-theme"); if (th) document.documentElement.dataset.theme = th; } catch (e) {}
+
+function openDrawer(html) { $("dbody").innerHTML = html; $("drawer").classList.add("open"); }
+$("dclose").onclick = () => $("drawer").classList.remove("open");
+$("cols").onclick = (e) => {
+  const el = e.target.closest("[data-col]"); if (!el) return;
+  const {c, st} = view[+el.dataset.col];
+  if (el.dataset.post) { const p = st.posts.get(el.dataset.post);
+    const why = p.f ? "This note contains the original mistake." : p.tainted ? "This was written after the worker saw information connected to the mistake." : p.marker ? "This note contains the suspicious instruction." : "This note is not connected to the mistake.";
+    openDrawer(`<h4>${esc(noteName(p.post_id))}: ${esc(topicName(p.topic))}</h4><p class="note">Written by ${esc(roleName(p.writer || "System"))} during the ${p.phase === "recovery" ? "restart" : "first attempt"}. ${why}${p.gone ? " It was later removed from the board." : ""}</p><p class="note">Seen by: ${esc(p.readers.map(roleName).join(", ") || "no other worker yet")}</p><pre>${esc(p.text)}</pre>`); }
+  else if (el.dataset.agent) { const a = st.agents[el.dataset.agent];
+    openDrawer(`<h4>${ROLE[el.dataset.agent]}</h4><p class="note">${a.readf ? "This worker has seen the wrong information." : "This worker has not seen the wrong information."} Actions so far: ${a.steps}.</p>${a.thought ? `<p class="label">Why it made its latest choice</p><pre>${esc(a.thought)}</pre>` : `<p class="note">No explanation available yet.</p>`}`); }
+  else if (el.dataset.msg) { const m = st.msgs[+el.dataset.msg];
+    openDrawer(`<h4>Message sent to the vendor</h4><p class="note">Sent by ${esc(roleName(m.agent))} during the ${m.phase === "recovery" ? "restart" : "first attempt"}. ${m.wrong ? "This order is wrong." : "This order is correct."} ${m.duplicate ? "The same order had already been sent once." : ""} Restarting the agents cannot take back a message that was already sent.</p><pre>${esc(m.text)}</pre>`); }
+};
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "SELECT" || e.target.tagName === "INPUT") return;
+  if (e.key === " ") { e.preventDefault(); timer ? stop() : play(); }
+  else if (e.key === "ArrowRight") $("fwd").click(); else if (e.key === "ArrowLeft") $("back").click();
+  else if (e.key === "Home") $("first").click(); else if (e.key === "End") $("last").click();
+  else if (e.key === "n") go(sc + 1); else if (e.key === "p") go(sc - 1);
+  else if (e.key === "P") $("present").click(); else if (e.key === "Escape") $("drawer").classList.remove("open");
+});
+render();
+</script>
+</body>
+</html>

@@ -1,0 +1,30 @@
+{
+  "window_days": 30,
+  "events": [
+    {
+      "tail": "N8F03",
+      "component": "BLEED-HPV-1",
+      "days_ago": 3
+    },
+    {
+      "tail": "N8F03",
+      "component": "BLEED-HPV-1",
+      "days_ago": 8
+    },
+    {
+      "tail": "N8F03",
+      "component": "BLEED-HPV-1",
+      "days_ago": 13
+    },
+    {
+      "tail": "N8F03",
+      "component": "BLEED-HPV-1",
+      "days_ago": 70
+    },
+    {
+      "tail": "N8F99",
+      "component": "BLEED-HPV-1",
+      "days_ago": 2
+    }
+  ]
+}
